@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Finder Confirmation Test</title>
+</head>
+<body>
+    <h2>Finder Confirmation</h2>
+
+    <p>Student ID: 12</p>
+    <p>Recovery ID: 1</p>
+
+    <button onclick="confirmFinder()">
+        Confirm Item Handover
+    </button>
+
+    <p id="result"></p>
+
+    <script>
+        async function confirmFinder() {
+            try {
+                const response = await fetch(
+                    'http://localhost:3000/recoveries/1/confirm',
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            user_id: 12
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                document.getElementById('result').innerText =
+                    data.message;
+
+            } catch (error) {
+                document.getElementById('result').innerText =
+                    'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

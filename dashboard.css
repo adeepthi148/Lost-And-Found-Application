@@ -1,0 +1,90 @@
+
+body {
+    margin: 0;
+    font-family: Arial;
+    text-align: center;
+    background: #edf4fc;
+    color: #20334d;
+}
+
+header {
+    background: #1769aa;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+button {
+    background: #1769aa;
+    color: white;
+    border: 0;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#menu {
+    display: none;
+    position: absolute;
+    background: #104d80;
+    padding: 15px;
+}
+
+#menu a {
+    display: block;
+    padding: 8px;
+}
+
+h1 {
+    margin-top: 40px;
+    color: #1769aa;
+}
+
+.cards {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+}
+
+.cards div {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px #ccd8e6;
+}
+
+/* Recent Reports image size */
+
+.cards img {
+    width: 100%;
+    max-width: 180px;
+    height: 120px;
+    object-fit: contain;
+    background: #f1f3f7;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto 12px;
+}
+/* Force smaller images in Recent Reports */
+
+#recent img,
+#recent-reports img,
+.cards img,
+.card img {
+    width: 120px !important;
+    height: 100px !important;
+    max-width: 120px !important;
+    object-fit: contain !important;
+    background: #f1f3f7;
+    border-radius: 8px;
+    display: block;
+    margin: 10px auto;
+}

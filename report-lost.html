@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report Lost Item</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f0f4fd;
+            padding: 30px;
+        }
+
+        .box {
+            background: white;
+            max-width: 550px;
+            margin: auto;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px #cbd5e1;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e3a8a;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 11px;
+            margin-top: 7px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+
+        textarea {
+            height: 90px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 22px;
+            background: #1e3a8a;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        /* Back to Dashboard button */
+        .back-btn {
+            background: #64748b;
+            margin-top: 12px;
+        }
+
+        .back-btn:hover {
+            background: #475569;
+        }
+
+        #preview {
+            max-width: 150px;
+            display: none;
+            margin-top: 10px;
+        }
+
+        #msg {
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>Report Lost Item</h2>
+
+    <form id="lostForm">
+
+        <label>Item Name *</label>
+        <input type="text" id="title" required>
+
+        <label>Category *</label>
+        <select id="category" required>
+            <option value="">Select Category</option>
+            <option>ID Card</option>
+            <option>Books</option>
+            <option>Wallet</option>
+            <option>Keys</option>
+            <option>Bag</option>
+            <option>Documents</option>
+            <option>Other</option>
+        </select>
+
+        <label>Description *</label>
+        <textarea id="description" required></textarea>
+
+        <label>Location Lost *</label>
+        <input type="text" id="location" required>
+
+        <label>Date Lost *</label>
+        <input type="date" id="item_date" required>
+
+        <label>Contact Email *</label>
+        <input type="email" id="contact_email" required>
+
+        <label>Upload Photo (Optional)</label>
+        <input type="file" id="photo" accept="image/jpeg,image/png,image/webp">
+
+        <img id="preview" alt="Selected item photo">
+
+        <button type="submit">Submit Lost Report</button>
+
+        <!-- Back to Dashboard -->
+        <button type="button" class="back-btn"
+            onclick="window.location.href='dashboard.html'">
+            Back to Dashboard
+        </button>
+
+    </form>
+
+    <p id="msg"></p>
+
+</div>
+
+<script>
+    // Get logged-in student details
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    // Check login
+    if (!user) {
+        alert("Please login first!");
+        window.location.href = "index.html";
+    } else {
+        document.getElementById("contact_email").value = user.email;
+    }
+
+    // Display selected photo preview
+    document.getElementById("photo").addEventListener("change", function() {
+
+        const file = this.files[0];
+        const preview = document.getElementById("preview");
+
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = "block";
+        } else {
+            preview.style.display = "none";
+            preview.removeAttribute("src");
+        }
+    });
+
+    // Submit lost item report
+    document.getElementById("lostForm").addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const msg = document.getElementById("msg");
+
+        if (!user) {
+            msg.textContent = "Please login first!";
+            return;
+        }
+
+        // Create FormData to send text and photo
+        const formData = new FormData();
+
+        formData.append("title", document.getElementById("title").value);
+        formData.append("category", document.getElementById("category").value);
+        formData.append("description", document.getElementById("description").value);
+        formData.append("location", document.getElementById("location").value);
+        formData.append("item_date", document.getElementById("item_date").value);
+        formData.append("contact_email", document.getElementById("contact_email").value);
+        formData.append("user_id", user.user_id);
+
+        // Attach selected photo
+        const photo = document.getElementById("photo").files[0];
+
+        if (photo) {
+            formData.append("photo", photo);
+        }
+
+        try {
+            const response = await fetch("http://localhost:3000/report-lost", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                msg.style.color = "green";
+                msg.textContent = data.message;
+
+                document.getElementById("lostForm").reset();
+
+                document.getElementById("contact_email").value = user.email;
+
+                document.getElementById("preview").style.display = "none";
+                document.getElementById("preview").removeAttribute("src");
+
+            } else {
+                msg.style.color = "red";
+                msg.textContent = data.message;
+            }
+
+        } catch (error) {
+            msg.style.color = "red";
+            msg.textContent = "Cannot connect to server!";
+            console.log(error);
+        }
+    });
+</script>
+
+</body>
+</html>

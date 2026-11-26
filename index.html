@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Found It</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="box">
+    <h2>Login</h2>
+
+    <!-- LOGIN -->
+    <div id="login">
+        <input id="email" type="email" placeholder="Email">
+        <input id="pass" type="password" placeholder="Password">
+
+        <button onclick="check()">Login</button><br>
+
+        <a href="#" onclick="show('forgot')">Forgot Password?</a>
+        <p>New user? <a href="#" onclick="show('signup')">Sign Up</a></p>
+    </div>
+
+    <!-- SIGNUP -->
+    <div id="signup" hidden>
+        <h3>Create Account</h3>
+
+        <input id="name" placeholder="Full Name">
+        <input id="se" type="email" placeholder="Email">
+        <input id="sp" type="password" placeholder="Password">
+
+        <button onclick="save()">Sign Up</button>
+        <p>Already have an account?
+    <a href="#" onclick="show('login')">Login</a>
+</p>
+    </div>
+
+    <!-- FORGOT PASSWORD -->
+    <div id="forgot" hidden>
+        <h3>Reset Password</h3>
+        <input id="re" type="email" placeholder="Email">
+        <button onclick="send()">Send OTP</button>
+
+        <input id="otp" placeholder="OTP">
+        <input id="np" type="password" placeholder="New Password">
+        <input id="cp" type="password" placeholder="Confirm Password">
+
+        <button onclick="reset()">Change Password</button>
+    </div>
+
+    <p id="msg"></p>
+</div>
+
+<script>
+
+function show(page) {
+    ["login", "signup", "forgot"].forEach(x => {
+        document.getElementById(x).hidden = x !== page;
+    });
+
+    document.getElementById("msg").textContent = "";
+}
+
+// STUDENT REGISTRATION
+async function save() {
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("se").value.trim();
+    const password = document.getElementById("sp").value;
+
+    const msg = document.getElementById("msg");
+
+    if (!name || !email || !password) {
+        msg.textContent = "Please fill all fields!";
+        return;
+    }
+
+    if (password.length < 6) {
+        msg.textContent = "Password must contain at least 6 characters!";
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:3000/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                password: password
+            })
+        });
+
+        const result = await response.text();
+
+        if (response.ok) {
+            show("login");
+            msg.textContent = "Account created successfully! Please login.";
+        } else {
+            msg.textContent = result;
+        }
+
+    } catch (error) {
+        msg.textContent = "Cannot connect to server!";
+    }
+}
+
+// STUDENT LOGIN
+
+
+async function check() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("pass").value;
+
+    try {
+        const response = await fetch("http://localhost:3000/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem("user", JSON.stringify(data.user));
+
+            // Directly open dashboard
+            window.location.href = "dashboard.html";
+
+        } else {
+            document.getElementById("msg").textContent = data.message;
+        }
+
+    } catch (error) {
+        document.getElementById("msg").textContent =
+            "Cannot connect to server!";
+    }
+}
+
+
+// PASSWORD RESET - NOT CONNECTED TO DATABASE YET
+
+
+async function send() {
+    const email = document.getElementById("re").value.trim();
+    const msg = document.getElementById("msg");
+
+    if (!email) {
+        msg.textContent = "Please enter your registered email.";
+        return;
+    }
+
+    msg.textContent = "Sending OTP...";
+
+    try {
+        const response = await fetch("http://localhost:3000/forgot-password", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+        msg.textContent = data.message;
+
+    } catch (error) {
+        msg.textContent = "Cannot connect to server!";
+        console.error(error);
+    }
+}
+
+async function reset() {
+    const email = document.getElementById("re").value.trim();
+    const otp = document.getElementById("otp").value.trim();
+    const newPassword = document.getElementById("np").value;
+    const confirmPassword = document.getElementById("cp").value;
+    const msg = document.getElementById("msg");
+
+    if (!email || !otp || !newPassword || !confirmPassword) {
+        msg.textContent = "Please fill all fields.";
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        msg.textContent = "Passwords do not match.";
+        return;
+    }
+
+    msg.textContent = "Verifying OTP...";
+
+    try {
+        const response = await fetch("http://localhost:3000/reset-password", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email,
+                otp,
+                newPassword,
+                confirmPassword
+            })
+        });
+
+        const data = await response.json();
+        msg.textContent = data.message;
+
+       if (response.ok) {
+    document.getElementById("otp").value = "";
+    document.getElementById("np").value = "";
+    document.getElementById("cp").value = "";
+
+    setTimeout(() => {
+        document.getElementById("forgot").hidden = true;
+        document.getElementById("login").hidden = false;
+        msg.textContent = "";
+    }, 2000);
+}
+
+    } catch (error) {
+        msg.textContent = "Cannot connect to server!";
+        console.error(error);
+    }
+}
+
+</script>
+
+</body>
+</html>

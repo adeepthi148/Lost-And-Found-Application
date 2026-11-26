@@ -1,0 +1,1482 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lost And Found Application</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, sans-serif;
+}
+
+body {
+    background: #f0f4fd;
+    color: #1e293b;
+    text-align: center;
+}
+
+header {
+    background: #1e3a8a;
+    padding: 18px 30px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.profile-btn {
+    background: #3b82f6;
+    color: white;
+    border: 0;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+#profile {
+    display: none;
+    position: absolute;
+    right: 25px;
+    top: 75px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px #cbd5e1;
+    text-align: left;
+    min-width: 230px;
+    z-index: 10;
+}
+
+#profile a {
+    display: block;
+    margin-top: 15px;
+    color: #1e3a8a;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#profile a:hover {
+    color: #2563eb;
+}
+
+h1 {
+    color: #1e3a8a;
+    margin: 35px 0 10px;
+    font-size: 38px;
+}
+
+.subtitle {
+    margin-bottom: 35px;
+    color: #64748b;
+    font-size: 18px;
+}
+
+.cards {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: white;
+    padding: 25px 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px #e2e8f0;
+    width: 220px;
+    font-size: 20px;
+}
+
+.card h3 {
+    margin: 12px 0 18px;
+    font-size: 20px;
+}
+
+button.act-btn {
+    background: #1e3a8a;
+    color: white;
+    border: 0;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.recent {
+    max-width: 1000px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+}
+
+.recent h2 {
+    color: #1e3a8a;
+    font-size: 26px;
+    text-align: left;
+    margin-bottom: 18px;
+}
+
+.report-tabs, .my-report-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.report-tabs button, .my-report-tabs button {
+    flex: 1;
+    min-width: 100px;
+    padding: 13px;
+    border: 0;
+    border-radius: 8px;
+    background: white;
+    color: #1e3a8a;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.report-tabs button.active,
+.my-report-tabs button.active {
+    background: #1e3a8a;
+    color: white;
+}
+
+.report-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 18px;
+    text-align: left;
+}
+
+.report-item, .my-report-card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px #e2e8f0;
+}
+
+.report-item img {
+    width: 130px;
+    height: 110px;
+    max-width: 100%;
+    object-fit: contain;
+    background: #f1f3f7;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto 12px;
+}
+
+.report-details h3, .my-report-details h3 {
+    color: #1e3a8a;
+    margin: 12px 0;
+}
+
+.report-details p, .my-report-details p {
+    color: #64748b;
+    font-size: 14px;
+    margin: 7px 0;
+    overflow-wrap: anywhere;
+}
+
+.status {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 7px;
+}
+
+.lost {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.found {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.recovered {
+    background: #dcfce7;
+    color: #166534;
+}
+
+/* CLICKABLE IMAGES */
+
+.report-item img,
+.my-report-card img {
+    cursor: zoom-in;
+    transition: transform 0.2s;
+}
+
+.report-item img:hover,
+.my-report-card img:hover {
+    transform: scale(1.04);
+}
+
+.empty {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    color: #64748b;
+    grid-column: 1 / -1;
+}
+
+/* MY REPORTS */
+
+.my-report-card {
+    display: flex;
+    gap: 15px;
+    text-align: left;
+    margin-bottom: 12px;
+}
+
+.my-report-card img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    background: #f1f3f7;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.my-report-details {
+    flex: 1;
+    min-width: 0;
+}
+
+/* REPORT ACTIONS */
+
+.report-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.recover-action-btn,
+.delete-action-btn,
+.link-action-btn {
+    border: none;
+    padding: 10px 14px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.recover-action-btn {
+    background: #15803d;
+    color: white;
+}
+
+.delete-action-btn {
+    background: #dc2626;
+    color: white;
+}
+
+.link-action-btn {
+    background: #2563eb;
+    color: white;
+}
+
+.recover-action-btn:hover {
+    background: #166534;
+}
+
+.delete-action-btn:hover {
+    background: #991b1b;
+}
+
+.link-action-btn:hover {
+    background: #1e40af;
+}
+
+.recover-action-btn:disabled,
+.delete-action-btn:disabled,
+.link-action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* MATCHING AND CONFIRMATION */
+
+.match-section {
+    background: #f1f5f9;
+    padding: 14px;
+    border-radius: 9px;
+    margin-top: 14px;
+}
+
+.match-section h4 {
+    color: #1e3a8a;
+    margin-bottom: 8px;
+}
+
+.match-section p {
+    font-size: 13px;
+    color: #475569;
+    margin: 6px 0;
+}
+
+.match-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    background: white;
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+.confirmation-info {
+    background: #eff6ff;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 12px;
+}
+
+.confirmation-info p {
+    margin: 6px 0;
+    font-size: 13px;
+    color: #334155;
+}
+
+/* POPUP */
+
+#popup {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    z-index: 20;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.popup-content {
+    background: #f8fafc;
+    width: 100%;
+    max-width: 750px;
+    margin: 50px auto;
+    padding: 25px;
+    border-radius: 14px;
+    text-align: left;
+    box-shadow: 0 6px 25px #334155;
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.popup-header h2 {
+    color: #1e3a8a;
+}
+
+.close-btn {
+    background: #fee2e2;
+    color: #991b1b;
+    border: none;
+    border-radius: 7px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.help-content h3 {
+    color: #1e3a8a;
+    margin: 16px 0 7px;
+}
+
+.help-content p, .help-content li {
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.help-content ul {
+    padding-left: 22px;
+}
+
+.help-content a {
+    color: #2563eb;
+    font-weight: bold;
+}
+
+/* FULL-SCREEN IMAGE VIEWER */
+
+#imageViewer {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 55px 20px 25px;
+}
+
+#imageViewer.show {
+    display: flex;
+}
+
+#fullImage {
+    max-width: 95%;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+#closeImage {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    border: none;
+    background: #ffffff;
+    color: #111827;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    font-size: 27px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#closeImage:hover {
+    background: #fee2e2;
+}
+
+@media(max-width: 600px) {
+    h1 {
+        font-size: 28px;
+    }
+
+    .popup-content {
+        margin: 20px auto;
+        padding: 18px;
+    }
+
+    .my-report-card img {
+        width: 75px;
+        height: 75px;
+    }
+
+    .my-report-card {
+        flex-direction: column;
+    }
+
+    #fullImage {
+        max-width: 100%;
+        max-height: 85vh;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <button class="profile-btn" onclick="toggle()">👤</button>
+</header>
+
+<div id="profile">
+    <b id="studentName">Student Name</b>
+    <p id="studentEmail" style="margin:4px 0 12px;font-size:14px;"></p>
+
+    <a onclick="openPanel('reports')">📋 My Reports</a>
+    <a onclick="openPanel('notifications')">🔔 Notifications</a>
+    <a onclick="openPanel('help')">❓ Help</a>
+    <a onclick="logout()" style="color:#ef4444;">🚪 Sign Out</a>
+</div>
+
+<h1>Lost And Found Application</h1>
+<p class="subtitle">Find it. Report it. Reunite.</p>
+
+<div class="cards">
+
+    <div class="card">
+        📢
+        <h3>Report Lost</h3>
+        <button class="act-btn"
+        onclick="location.href='report-lost.html'">Report</button>
+    </div>
+
+    <div class="card">
+        📦
+        <h3>Report Found</h3>
+        <button class="act-btn"
+        onclick="location.href='report-found.html'">Report</button>
+    </div>
+
+    <div class="card">
+        🔍
+        <h3>Search</h3>
+        <button class="act-btn"
+        onclick="location.href='search.html'">Search</button>
+    </div>
+
+</div>
+
+<!-- RECENT REPORTS -->
+
+<div class="recent">
+
+    <h2 id="recent">Recent Reports</h2>
+
+    <div class="report-tabs">
+
+        <button class="active" id="lostTab"
+        onclick="showReports('lost')">📢 Lost Items</button>
+
+        <button id="foundTab"
+        onclick="showReports('found')">📦 Found Items</button>
+
+        <button id="recoveredTab"
+        onclick="showReports('recovered')">✅ Recovered Items</button>
+
+    </div>
+
+    <div id="reportList" class="report-list">
+        <div class="empty">Loading reports...</div>
+    </div>
+
+</div>
+
+<!-- POPUP -->
+
+<div id="popup">
+
+    <div class="popup-content">
+
+        <div class="popup-header">
+            <h2 id="popupTitle">My Reports</h2>
+            <button class="close-btn" onclick="closePanel()">✕ Close</button>
+        </div>
+
+        <div id="popupBody"></div>
+
+    </div>
+
+</div>
+
+<!-- FULL-SCREEN IMAGE VIEWER -->
+
+<div id="imageViewer" onclick="closeImageViewer(event)">
+
+    <button id="closeImage" onclick="closeImageViewer(event)">×</button>
+
+    <img id="fullImage" src="" alt="Full size item photo">
+
+</div>
+
+<script>
+
+// -------------------- LOGIN CHECK --------------------
+
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (!user) {
+    alert("Please login first!");
+    window.location.href = "index.html";
+}
+
+const currentUserId = user ? user.user_id : null;
+
+if (user) {
+    document.getElementById("studentName").textContent = user.name;
+    document.getElementById("studentEmail").textContent = user.email;
+}
+
+let allReports = [];
+let allRecoveries = [];
+
+let currentCategory = "lost";
+let currentMyReportCategory = "lost";
+
+// -------------------- PROFILE MENU --------------------
+
+function toggle() {
+    const profile = document.getElementById("profile");
+
+    profile.style.display =
+        profile.style.display === "block" ? "none" : "block";
+}
+
+function logout() {
+    localStorage.removeItem("user");
+    window.location.href = "index.html";
+}
+
+function closePanel() {
+    document.getElementById("popup").style.display = "none";
+}
+
+function openPanel(type) {
+
+    document.getElementById("profile").style.display = "none";
+    document.getElementById("popup").style.display = "block";
+
+    if (type === "reports") {
+        document.getElementById("popupTitle").textContent = "My Reports";
+        displayMyReports(currentMyReportCategory);
+    }
+
+    if (type === "notifications") {
+        document.getElementById("popupTitle").textContent = "Notifications";
+        displayNotifications();
+    }
+
+    if (type === "help") {
+        document.getElementById("popupTitle").textContent = "Help";
+        displayHelp();
+    }
+}
+
+// -------------------- IMAGE VIEWER --------------------
+
+function openImageViewer(imageURL) {
+
+    const viewer = document.getElementById("imageViewer");
+    const fullImage = document.getElementById("fullImage");
+
+    fullImage.src = imageURL;
+    viewer.classList.add("show");
+
+    document.body.style.overflow = "hidden";
+}
+
+function closeImageViewer(event) {
+
+    if (
+        event &&
+        event.target.id !== "imageViewer" &&
+        event.target.id !== "closeImage"
+    ) {
+        return;
+    }
+
+    const viewer = document.getElementById("imageViewer");
+
+    viewer.classList.remove("show");
+
+    document.getElementById("fullImage").src = "";
+
+    document.body.style.overflow = "";
+}
+
+document.addEventListener("keydown", function(event) {
+
+    if (event.key === "Escape") {
+        const viewer = document.getElementById("imageViewer");
+
+        if (viewer.classList.contains("show")) {
+            closeImageViewer({
+                target: { id: "imageViewer" }
+            });
+        }
+    }
+
+});
+
+// -------------------- DATE FORMAT --------------------
+
+function formatISTDate(dateValue) {
+
+    if (!dateValue) return "Not specified";
+
+    const date = new Date(dateValue);
+
+    if (isNaN(date.getTime())) return "Not specified";
+
+    return new Intl.DateTimeFormat("en-IN", {
+        timeZone: "Asia/Kolkata",
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    }).format(date);
+}
+
+// -------------------- IMAGE URL --------------------
+
+function getImageURL(photoPath) {
+
+    if (!photoPath) return "";
+
+    const cleanedPath = photoPath
+        .replace(/\\/g, "/")
+        .replace(/^\/+/, "");
+
+    if (
+        cleanedPath.startsWith("http://") ||
+        cleanedPath.startsWith("https://")
+    ) {
+        return cleanedPath;
+    }
+
+    return "http://localhost:3000/" + cleanedPath;
+}
+
+// -------------------- CREATE CLICKABLE IMAGE --------------------
+
+function createClickableImage(photoPath, title, className) {
+
+    const image = document.createElement("img");
+
+    image.src = getImageURL(photoPath);
+    image.alt = title || "Item photo";
+    image.className = className || "";
+
+    image.onclick = function() {
+        openImageViewer(this.src);
+    };
+
+    image.onerror = function() {
+        this.style.display = "none";
+    };
+
+    return image;
+}
+
+// -------------------- LOAD REPORTS AND MATCHES --------------------
+
+async function loadReports() {
+
+    const list = document.getElementById("reportList");
+
+    try {
+
+        const [itemsResponse, recoveriesResponse] = await Promise.all([
+            fetch("http://localhost:3000/items"),
+            fetch("http://localhost:3000/recoveries")
+        ]);
+
+        if (!itemsResponse.ok) {
+            throw new Error("Unable to load reports.");
+        }
+
+        if (!recoveriesResponse.ok) {
+            throw new Error("Unable to load matching information.");
+        }
+
+        allReports = await itemsResponse.json();
+        allRecoveries = await recoveriesResponse.json();
+
+        showReports(currentCategory);
+
+    } catch (error) {
+
+        list.textContent = "Cannot load reports. Please check the server.";
+        console.error(error);
+
+    }
+}
+
+// -------------------- FIND MATCHING RECORD --------------------
+
+function getRecoveryForItem(itemId) {
+
+    return allRecoveries.find(recovery =>
+        Number(recovery.lost_item_id) === Number(itemId) ||
+        Number(recovery.found_item_id) === Number(itemId)
+    );
+}
+
+// -------------------- STATUS LABEL --------------------
+
+function getStatusLabel(item) {
+
+    if (item.status === "recovered") {
+
+        if (item.recovery_label) {
+            return item.recovery_label;
+        }
+
+        const recovery = getRecoveryForItem(item.id);
+
+        if (recovery) {
+            return Number(recovery.found_item_id) === Number(item.id)
+                ? "RETURNED"
+                : "RECOVERED";
+        }
+
+        return "RECOVERED";
+    }
+
+    return item.status.toUpperCase();
+}
+
+// -------------------- CREATE RECENT REPORT CARD --------------------
+
+function createReportCard(item, category) {
+
+    const card = document.createElement("div");
+    card.className = "report-item";
+
+    if (item.photo_path) {
+        card.appendChild(
+            createClickableImage(item.photo_path, item.title)
+        );
+    }
+
+    const details = document.createElement("div");
+    details.className = "report-details";
+
+    const fields = [
+        ["h3", item.title || "Untitled item"],
+        ["p", item.description || "No description"],
+        ["p", "Location: " + (item.location || "Not specified")],
+        ["p", "Category: " + (item.category || "Other")],
+        ["p", "Date: " + formatISTDate(item.item_date)],
+        ["p", "Contact: " + (item.contact_email || "Not available")],
+        ["p", "Reported by: " + (item.reported_by || "Not available")]
+    ];
+
+    fields.forEach(([tag, value]) => {
+
+        const element = document.createElement(tag);
+        element.textContent = value;
+        details.appendChild(element);
+
+    });
+
+    const status = document.createElement("span");
+    status.className = "status " + category;
+
+    status.textContent = getStatusLabel(item);
+
+    details.appendChild(status);
+    card.appendChild(details);
+
+    return card;
+}
+
+// -------------------- RECENT REPORTS --------------------
+
+function showReports(category) {
+
+    currentCategory = category;
+
+    document.querySelectorAll(".report-tabs button")
+        .forEach(button => button.classList.remove("active"));
+
+    document.getElementById(category + "Tab").classList.add("active");
+
+    const list = document.getElementById("reportList");
+    list.innerHTML = "";
+
+    const filtered = allReports
+        .filter(item => item.status === category)
+        .sort((a, b) => b.id - a.id);
+
+    if (filtered.length === 0) {
+
+        const message = document.createElement("div");
+        message.className = "empty";
+
+        message.textContent = category === "recovered"
+            ? "No recovered or returned items yet."
+            : "No " + category + " items reported yet.";
+
+        list.appendChild(message);
+        return;
+    }
+
+    filtered.forEach(item => {
+        list.appendChild(createReportCard(item, category));
+    });
+}
+
+// -------------------- MY REPORTS --------------------
+
+function displayMyReports(category = "lost") {
+
+    currentMyReportCategory = category;
+
+    const body = document.getElementById("popupBody");
+    body.innerHTML = "";
+
+    const tabs = document.createElement("div");
+    tabs.className = "my-report-tabs";
+
+    const categories = [
+        { value: "lost", label: "📢 Lost" },
+        { value: "found", label: "📦 Found" },
+        { value: "recovered", label: "✅ Recovered" }
+    ];
+
+    categories.forEach(cat => {
+
+        const button = document.createElement("button");
+        button.textContent = cat.label;
+
+        if (category === cat.value) {
+            button.classList.add("active");
+        }
+
+        button.onclick = () => displayMyReports(cat.value);
+
+        tabs.appendChild(button);
+
+    });
+
+    body.appendChild(tabs);
+
+    const myReports = allReports
+        .filter(item =>
+            String(item.user_id) === String(currentUserId) &&
+            item.status === category
+        )
+        .sort((a, b) => b.id - a.id);
+
+    if (myReports.length === 0) {
+
+        const empty = document.createElement("div");
+        empty.className = "empty";
+
+        empty.textContent = category === "recovered"
+            ? "You have no recovered or returned items."
+            : "You have no " + category + " items reported yet.";
+
+        body.appendChild(empty);
+        return;
+    }
+
+    myReports.forEach(item => {
+
+        const card = document.createElement("div");
+        card.className = "my-report-card";
+
+        if (item.photo_path) {
+            card.appendChild(
+                createClickableImage(item.photo_path, item.title)
+            );
+        }
+
+        const details = document.createElement("div");
+        details.className = "my-report-details";
+
+        const fields = [
+            ["h3", item.title || "Untitled item"],
+            ["p", item.description || "No description"],
+            ["p", "Location: " + (item.location || "Not specified")],
+            ["p", "Category: " + (item.category || "Other")],
+            ["p", "Date: " + formatISTDate(item.item_date)],
+            ["p", "Contact: " + (item.contact_email || "Not available")]
+        ];
+
+        fields.forEach(([tag, value]) => {
+
+            const element = document.createElement(tag);
+            element.textContent = value;
+            details.appendChild(element);
+
+        });
+
+        const status = document.createElement("span");
+        status.className = "status " + item.status;
+        status.textContent = getStatusLabel(item);
+
+        details.appendChild(status);
+
+        if (item.status === "lost" || item.status === "found") {
+
+            const recovery = getRecoveryForItem(item.id);
+
+            if (recovery) {
+                addConfirmationSection(item, recovery, details);
+            } else {
+                addMatchingSection(item, details);
+            }
+        }
+
+        // DELETE BUTTON FOR ALL REPORTS
+
+        const actions = document.createElement("div");
+        actions.className = "report-actions";
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "delete-action-btn";
+        deleteButton.textContent = "Delete Permanently";
+
+        deleteButton.onclick = function() {
+            deleteReport(item, deleteButton);
+        };
+
+        actions.appendChild(deleteButton);
+
+        details.appendChild(actions);
+
+        card.appendChild(details);
+        body.appendChild(card);
+
+    });
+}
+
+// -------------------- MATCHING SECTION --------------------
+
+function addMatchingSection(item, details) {
+
+    const section = document.createElement("div");
+    section.className = "match-section";
+
+    const heading = document.createElement("h4");
+    heading.textContent = "Match this report";
+    section.appendChild(heading);
+
+    const description = document.createElement("p");
+
+    description.textContent = item.status === "lost"
+        ? "Select the matching report from the Found Items list."
+        : "Select the matching report from the Lost Items list.";
+
+    section.appendChild(description);
+
+    const oppositeStatus = item.status === "lost"
+        ? "found"
+        : "lost";
+
+    const matchingReports = allReports.filter(report => {
+
+        return report.status === oppositeStatus &&
+            String(report.user_id) !== String(currentUserId) &&
+            !getRecoveryForItem(report.id);
+
+    });
+
+    if (matchingReports.length === 0) {
+
+        const noMatch = document.createElement("p");
+        noMatch.textContent = "No matching reports are available yet.";
+
+        section.appendChild(noMatch);
+        details.appendChild(section);
+        return;
+    }
+
+    const select = document.createElement("select");
+    select.className = "match-select";
+
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "Select a matching report";
+    select.appendChild(defaultOption);
+
+    matchingReports.forEach(report => {
+
+        const option = document.createElement("option");
+        option.value = report.id;
+
+        option.textContent =
+            report.title +
+            " - " +
+            (report.location || "Location not specified") +
+            " - " +
+            (report.reported_by || "Student");
+
+        select.appendChild(option);
+
+    });
+
+    section.appendChild(select);
+
+    const linkButton = document.createElement("button");
+    linkButton.className = "link-action-btn";
+    linkButton.textContent = "Link Matching Report";
+
+    linkButton.onclick = function() {
+
+        if (!select.value) {
+            alert("Please select a matching report first.");
+            return;
+        }
+
+        linkMatchingReports(item, select.value, linkButton);
+
+    };
+
+    section.appendChild(linkButton);
+
+    details.appendChild(section);
+}
+
+// -------------------- LINK MATCHING REPORTS --------------------
+
+async function linkMatchingReports(item, selectedId, button) {
+
+    const confirmed = confirm(
+        "Are you sure these two reports belong to the same item?\n\n" +
+        "Both students will need to confirm before the reports move to Recovered."
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    const lostItemId = item.status === "lost"
+        ? item.id
+        : selectedId;
+
+    const foundItemId = item.status === "found"
+        ? item.id
+        : selectedId;
+
+    try {
+
+        button.disabled = true;
+
+        const response = await fetch(
+            "http://localhost:3000/recoveries/link",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    lost_item_id: lostItemId,
+                    found_item_id: foundItemId,
+                    user_id: currentUserId
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Could not link the reports.");
+        }
+
+        alert(
+            "Matching reports linked successfully!\n\n" +
+            "Now both students must confirm the item."
+        );
+
+        await loadReports();
+        displayMyReports(currentMyReportCategory);
+
+    } catch (error) {
+
+        alert(error.message);
+        button.disabled = false;
+
+    }
+}
+
+// -------------------- TWO-STUDENT CONFIRMATION SECTION --------------------
+
+function addConfirmationSection(item, recovery, details) {
+
+    const section = document.createElement("div");
+    section.className = "match-section";
+
+    const heading = document.createElement("h4");
+    heading.textContent = "Item Return Confirmation";
+
+    section.appendChild(heading);
+
+    const isOwner =
+        Number(recovery.owner_id) === Number(currentUserId);
+
+    const isFinder =
+        Number(recovery.finder_id) === Number(currentUserId);
+
+    const ownerConfirmed =
+        Number(recovery.owner_confirmed) === 1;
+
+    const finderConfirmed =
+        Number(recovery.finder_confirmed) === 1;
+
+    const info = document.createElement("div");
+    info.className = "confirmation-info";
+
+    const linkedReport = isOwner
+        ? recovery.found_title
+        : recovery.lost_title;
+
+    const linkedText = document.createElement("p");
+    linkedText.textContent = "Matching report: " + linkedReport;
+    info.appendChild(linkedText);
+
+    const ownerText = document.createElement("p");
+    ownerText.textContent = "Lost-item owner: " +
+        (ownerConfirmed ? "Confirmed ✓" : "Waiting for confirmation");
+
+    info.appendChild(ownerText);
+
+    const finderText = document.createElement("p");
+    finderText.textContent = "Found-item reporter: " +
+        (finderConfirmed ? "Confirmed ✓" : "Waiting for confirmation");
+
+    info.appendChild(finderText);
+
+    section.appendChild(info);
+
+    if (recovery.recovery_status === "recovered") {
+
+        const completed = document.createElement("p");
+        completed.textContent = "Both students have confirmed. This item is completed.";
+        completed.style.color = "#15803d";
+        completed.style.fontWeight = "bold";
+        completed.style.marginTop = "10px";
+
+        section.appendChild(completed);
+
+        details.appendChild(section);
+        return;
+    }
+
+    const alreadyConfirmed = isOwner
+        ? ownerConfirmed
+        : finderConfirmed;
+
+    if (alreadyConfirmed) {
+
+        const waiting = document.createElement("p");
+        waiting.textContent = "Your confirmation is saved. Waiting for the other student.";
+        waiting.style.color = "#1e40af";
+        waiting.style.fontWeight = "600";
+        waiting.style.marginTop = "10px";
+
+        section.appendChild(waiting);
+
+    } else {
+
+        const confirmButton = document.createElement("button");
+        confirmButton.className = "recover-action-btn";
+
+        confirmButton.textContent = isOwner
+            ? "I Received the Item"
+            : "I Returned the Item";
+
+        confirmButton.onclick = function() {
+            confirmItemReturn(recovery, confirmButton);
+        };
+
+        section.appendChild(confirmButton);
+    }
+
+    details.appendChild(section);
+}
+
+// -------------------- CONFIRM ITEM RETURN --------------------
+
+async function confirmItemReturn(recovery, button) {
+
+    const isOwner =
+        Number(recovery.owner_id) === Number(currentUserId);
+
+    const question = isOwner
+        ? "Have you received your lost item from the student who found it?"
+        : "Have you returned the found item to its rightful owner?";
+
+    if (!confirm(question)) {
+        return;
+    }
+
+    try {
+
+        button.disabled = true;
+
+        const response = await fetch(
+            "http://localhost:3000/recoveries/" +
+            recovery.recovery_id +
+            "/confirm",
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    user_id: currentUserId
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Confirmation failed.");
+        }
+
+        alert(data.message);
+
+        await loadReports();
+        displayMyReports(currentMyReportCategory);
+
+    } catch (error) {
+
+        alert(error.message);
+        button.disabled = false;
+
+    }
+}
+
+// -------------------- DELETE REPORT PERMANENTLY --------------------
+
+async function deleteReport(item, button) {
+
+    const confirmed = confirm(
+        "Are you sure you want to permanently delete this report?\n\n" +
+        "This action cannot be undone."
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        button.disabled = true;
+
+        const response = await fetch(
+            "http://localhost:3000/items/" + item.id,
+            {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    user_id: currentUserId
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Could not delete the report.");
+        }
+
+        alert("Report deleted permanently!");
+
+        await loadReports();
+        displayMyReports(currentMyReportCategory);
+
+    } catch (error) {
+
+        alert(error.message);
+        button.disabled = false;
+
+    }
+}
+
+// -------------------- NOTIFICATIONS --------------------
+
+function displayNotifications() {
+
+    const body = document.getElementById("popupBody");
+    body.innerHTML = "";
+
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "You have no new notifications.";
+
+    body.appendChild(empty);
+}
+
+// -------------------- HELP --------------------
+
+function displayHelp() {
+
+    const body = document.getElementById("popupBody");
+
+    body.innerHTML = `
+        <div class="help-content">
+
+            <h3>Welcome to Lost And Found!</h3>
+
+            <p>
+                This application helps students report lost items,
+                report found items and reunite belongings with their owners.
+            </p>
+
+            <h3>1. How to report a lost item?</h3>
+
+            <ul>
+                <li>Click the Report Lost option.</li>
+                <li>Enter the item name and description.</li>
+                <li>Provide the location and date.</li>
+                <li>Add a photo if available and submit.</li>
+            </ul>
+
+            <h3>2. How to report a found item?</h3>
+
+            <ul>
+                <li>Click the Report Found option.</li>
+                <li>Enter the item's details.</li>
+                <li>Provide where and when you found it.</li>
+                <li>Submit the report.</li>
+            </ul>
+
+            <h3>3. How to search for an item?</h3>
+
+            <p>
+                Click Search and enter the item name or other available
+                details to find matching reports.
+            </p>
+
+            <h3>4. How does item recovery confirmation work?</h3>
+
+            <ul>
+                <li>Open My Reports.</li>
+                <li>Find your Lost or Found report.</li>
+                <li>Select the matching report belonging to the other student.</li>
+                <li>Click Link Matching Report.</li>
+                <li>The lost-item owner confirms receiving the item.</li>
+                <li>The found-item reporter confirms returning the item.</li>
+                <li>Both reports move to Recovered only after both confirmations.</li>
+            </ul>
+
+            <h3>5. How can I view an item photo?</h3>
+
+            <p>
+                Click any report photo to view it in a larger size.
+                Click the close button or outside the image to return.
+            </p>
+
+            <h3>6. How can I delete a report?</h3>
+
+            <p>
+                Open My Reports and click Delete Permanently.
+                Confirm the action to remove the report permanently.
+            </p>
+
+            <h3>7. Need help?</h3>
+
+            <p>Contact our support team by email:</p>
+
+            <p style="margin-top:8px;">
+                📧 <a href="mailto:lostandfound21@gmail.com">
+                    lostandfound21@gmail.com
+                </a>
+            </p>
+
+        </div>
+    `;
+}
+
+// -------------------- LOAD DASHBOARD --------------------
+
+if (user) {
+    loadReports();
+}
+
+</script>
+
+</body>
+</html>
